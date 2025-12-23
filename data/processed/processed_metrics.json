@@ -1,0 +1,72 @@
+[
+    {
+        "run_id": "bad_run_noise_metrics_5c4a48",
+        "wer": 0.3216688363116642,
+        "bleu": 62.860338021834195
+    },
+    {
+        "run_id": "bias_best_heavy_metrics_354f06",
+        "wer": 0.20513614143050915,
+        "bleu": 72.62373000392785
+    },
+    {
+        "run_id": "bias_best_light_metrics_476eb8",
+        "wer": 0.16587770484938416,
+        "bleu": 76.02144308381226
+    },
+    {
+        "run_id": "diagonal_balance_metrics_363ed1",
+        "wer": 0.17423918287831477,
+        "bleu": 75.491390406253
+    },
+    {
+        "run_id": "drop_model_1_metrics_2bd288",
+        "wer": 0.15281886953909457,
+        "bleu": 76.65625387770856
+    },
+    {
+        "run_id": "drop_model_4_metrics_491592",
+        "wer": 0.20106236743165617,
+        "bleu": 73.94101293020528
+    },
+    {
+        "run_id": "eager-haze-6_9b7d1f",
+        "wer": 0.15144880699869823,
+        "bleu": 77.7204173345261
+    },
+    {
+        "run_id": "equal_avg_metrics_6408a6",
+        "wer": 0.16976485903376454,
+        "bleu": 75.11267998974373
+    },
+    {
+        "run_id": "hearty-bee-7_468b53",
+        "wer": 0.17755737421369333,
+        "bleu": 72.79968768247234
+    },
+    {
+        "run_id": "poisson_weights_metrics_f06ac9",
+        "wer": 0.21241431419494033,
+        "bleu": 72.2669745073135
+    },
+    {
+        "run_id": "smart-smoke-5_0d2cd0",
+        "wer": 0.3484374004315014,
+        "bleu": 59.05152299577147
+    },
+    {
+        "run_id": "split_cluster_A_metrics_91e479",
+        "wer": 0.34201494779196895,
+        "bleu": 60.88831746971761
+    },
+    {
+        "run_id": "split_cluster_B_metrics_b259be",
+        "wer": 0.14900454259938642,
+        "bleu": 76.69245800333394
+    },
+    {
+        "run_id": "wandering-river-4_e1716b",
+        "wer": 0.32611129823667034,
+        "bleu": 62.47041111433234
+    }
+]

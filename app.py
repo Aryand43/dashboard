@@ -3,13 +3,33 @@ import pandas as pd
 import json
 import os
 
+from streamlit_extras.metric_cards import style_metric_cards
+
 # Assuming visualization_module.py is in the same directory
 from visualization_module import ScatterPlot, BarPlot
+# Initialize session state for model selection
+if 'selected_models' not in st.session_state:
+    st.session_state['selected_models'] = []
 
-st.set_page_config(layout="wide")
+st.set_page_config(page_title="Federated Research Dashboard", layout="wide", initial_sidebar_state="expanded")
 
 st.title("Federated Learning Metrics Dashboard")
-st.caption("Exploring WER and BLEU metrics for various federated learning runs.")
+st.caption("A research project supervised by Prof. Manfred Vogel from ETH Zurich. Our main pipeline and results can be found here: [https://github.com/Aryand43/whisper-finetune-pipeline](https://github.com/Aryand43/whisper-finetune-pipeline). This dashboard provides a comprehensive WER and BLEU comparison across base and aggregated federated models.")
+st.divider()
+
+st.markdown(
+    """
+    <style>
+    div[data-testid="metric-container"] div[data-testid="stMetricValue"] {
+        color: black !important;
+    }
+    div[data-testid="metric-container"] div[data-testid="stMetricDelta"] {
+        color: black !important;
+    }
+    </style>
+    """,
+    unsafe_allow_html=True,
+)
 
 @st.cache_data
 def load_data():
@@ -23,15 +43,77 @@ def load_data():
 
 df = load_data()
 
-overview_tab, scatter_tab, bars_tab = st.tabs(["Overview", "Scatter", "Bars"])
+all_run_ids = df["run_id"].tolist()
 
-with overview_tab:
-    st.header("Overview of Processed Metrics")
-    st.dataframe(df, use_container_width=True)
+with st.sidebar:
+    st.header("Model Selection")
+    st.markdown("Select the different models to see the comparator results.")
+    selected_models = st.multiselect(
+        "Select models to compare",
+        options=all_run_ids,
+        default=all_run_ids, # Default: all models selected
+        key="selected_models"
+    )
+
+st.markdown("**Base models:** eager-haze, hearty-bee, smart-smoke, wandering-river  \n**Aggregated models:** all other runs")
+st.divider()
+
+# Filter DataFrame reactively
+filtered_df = df[df["run_id"].isin(selected_models)] if selected_models else pd.DataFrame(columns=df.columns)
+
+st.subheader("Comparison")
+col1, col2 = st.columns(2)
+
+if not filtered_df.empty:
+    best_wer_row = filtered_df.loc[filtered_df["wer"].idxmin()]
+    best_bleu_row = filtered_df.loc[filtered_df["bleu"].idxmax()]
+
+    with col1:
+        st.metric(
+            label="Best WER",
+            value=f"{best_wer_row["wer"]:.4f}",
+            delta=f"Model: {best_wer_row["run_id"]}",
+            delta_color="inverse", # Use normal to avoid default color changes
+            help="Best WER model",
+            label_visibility="visible",
+        )
+
+    with col2:
+        st.metric(
+            label="Best BLEU",
+            value=f"{best_bleu_row["bleu"]:.2f}",
+            delta=f"Model: {best_bleu_row["run_id"]}",
+            delta_color="inverse", # Use normal to avoid default color changes
+            help="Best BLEU model",
+            label_visibility="visible",
+        )
+else:
+    with col1:
+        st.metric(
+            label="Best WER",
+            value="N/A",
+            delta_color="inverse",
+            help="Best WER model",
+        )
+    with col2:
+        st.metric(
+            label="Best BLEU",
+            value="N/A",
+            delta_color="inverse",
+            help="Best BLEU model",
+        )
+
+style_metric_cards()
+
+st.divider()
+
+# Charts
+st.subheader("Charts")
+scatter_tab, bars_tab, line_tab, table_tab = st.tabs(["Scatter", "Bars", "Line Chart", "Table"])
 
 with scatter_tab:
     st.header("WER vs BLEU Scatter Plot")
-    scatter_plot_instance = ScatterPlot(df)
+    scatter_plot_instance = ScatterPlot(filtered_df)
     scatter_fig = scatter_plot_instance.render()
     st.plotly_chart(scatter_fig, use_container_width=True)
 
@@ -39,7 +121,21 @@ with bars_tab:
     st.header("Bar Chart of Metrics")
     selected_metric = st.selectbox("Select Metric", ["wer", "bleu"], key="bar_metric_select")
     
-    bar_plot_instance = BarPlot(df, metric=selected_metric, title=f"{selected_metric.upper()} per Run ID")
+    bar_plot_instance = BarPlot(filtered_df, metric=selected_metric, title=f"{selected_metric.upper()} per Run ID")
     bar_fig = bar_plot_instance.render()
     st.plotly_chart(bar_fig, use_container_width=True)
 
+with line_tab:
+    st.header("WER and BLEU Trends")
+    if not filtered_df.empty:
+        # Ensure 'run_id' is suitable for x-axis, maybe sort by a metric if order matters
+        df_line = filtered_df.set_index('run_id')[['wer', 'bleu']]
+        st.line_chart(df_line)
+    else:
+        st.write("No data to display line chart.")
+
+with table_tab:
+    st.header("Table of Processed Metrics")
+    st.dataframe(filtered_df, use_container_width=True)
+
+st.divider()

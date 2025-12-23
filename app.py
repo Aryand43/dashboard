@@ -97,7 +97,6 @@ st.markdown(
     unsafe_allow_html=True,
 )
 
-st.subheader("Comparison")
 col1, col2 = st.columns(2)
 
 if not filtered_df.empty:

@@ -64,6 +64,42 @@ filtered_df = df[df["run_id"].isin(selected_models)] if selected_models else pd.
 st.subheader("Comparison")
 col1, col2 = st.columns(2)
 
+# Updated CSS for clean white text and labels
+st.markdown(
+    """
+    <style>
+    /* Target the Label (Best WER / Best BLEU) */
+    [data-testid="stMetricLabel"] p {
+        color: white !important;
+        font-size: 1.2rem !important;
+        font-weight: 600 !important;
+    }
+
+    /* Target the Value (The actual numbers) */
+    [data-testid="stMetricValue"] div {
+        color: white !important;
+    }
+
+    /* Target the Delta (The Model ID text) */
+    [data-testid="stMetricDelta"] div {
+        color: #BBBBBB !important; /* Slightly off-white for visual hierarchy */
+    }
+
+    /* Optional: Ensure the card background is dark enough to show white text */
+    div[data-testid="metric-container"] {
+        background-color: #0E1117;
+        border: 1px solid #31333F;
+        border-radius: 10px;
+        padding: 20px;
+    }
+    </style>
+    """,
+    unsafe_allow_html=True,
+)
+
+st.subheader("Comparison")
+col1, col2 = st.columns(2)
+
 if not filtered_df.empty:
     best_wer_row = filtered_df.loc[filtered_df["wer"].idxmin()]
     best_bleu_row = filtered_df.loc[filtered_df["bleu"].idxmax()]
@@ -71,39 +107,23 @@ if not filtered_df.empty:
     with col1:
         st.metric(
             label="Best WER",
-            value=f"{best_wer_row["wer"]:.4f}",
-            delta=f"Model: {best_wer_row["run_id"]}",
-            delta_color="inverse", # Use normal to avoid default color changes
-            help="Best WER model",
-            label_visibility="visible",
+            value=f"{best_wer_row['wer']:.4f}", # Single quotes inside f-string
+            delta=f"Model: {best_wer_row['run_id']}", # Single quotes inside f-string
+            delta_color="normal"
         )
 
     with col2:
         st.metric(
             label="Best BLEU",
-            value=f"{best_bleu_row["bleu"]:.2f}",
-            delta=f"Model: {best_bleu_row["run_id"]}",
-            delta_color="inverse", # Use normal to avoid default color changes
-            help="Best BLEU model",
-            label_visibility="visible",
+            value=f"{best_bleu_row['bleu']:.2f}", # Single quotes inside f-string
+            delta=f"Model: {best_bleu_row['run_id']}", # Single quotes inside f-string
+            delta_color="normal"
         )
 else:
-    with col1:
-        st.metric(
-            label="Best WER",
-            value="N/A",
-            delta_color="inverse",
-            help="Best WER model",
-        )
-    with col2:
-        st.metric(
-            label="Best BLEU",
-            value="N/A",
-            delta_color="inverse",
-            help="Best BLEU model",
-        )
+    col1.metric("Best WER", "N/A")
+    col2.metric("Best BLEU", "N/A")
 
-style_metric_cards()
+style_metric_cards(background_color="#0E1117", border_left_color="#00FFAA")
 
 st.divider()
 

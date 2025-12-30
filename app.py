@@ -14,7 +14,7 @@ if 'selected_models' not in st.session_state:
 st.set_page_config(page_title="Federated Research Dashboard", layout="wide", initial_sidebar_state="expanded")
 
 st.title("Federated Learning Metrics Dashboard")
-st.caption("A research project supervised by Prof. Manfred Vogel from ETH Zurich. Our main pipeline and results can be found here: [https://github.com/Aryand43/whisper-finetune-pipeline](https://github.com/Aryand43/whisper-finetune-pipeline). This dashboard provides a comprehensive WER and BLEU comparison across base and aggregated federated models.")
+st.caption("A research project supervised by Prof. Manfred Vogel. Our main pipeline and results can be found here: [https://github.com/Aryand43/whisper-finetune-pipeline](https://github.com/Aryand43/whisper-finetune-pipeline). This dashboard provides a comprehensive WER and BLEU comparison across base and aggregated federated models.")
 st.divider()
 
 st.markdown(
